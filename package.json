@@ -1,0 +1,12 @@
+{
+  "name": "magic-quick-heal-pro",
+  "version": "1.0.0",
+  "scripts": {
+    "check": "node scripts/check_env.js && node scripts/check_runtime.js && node scripts/check_ports.js && node scripts/check_deps.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "semver": "^7.6.0"
+  }
+}

@@ -1,0 +1,65 @@
+name: Magic Quick-Heal
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Choose fix mode"
+        required: true
+        default: "fix-code"
+        type: choice
+        options:
+          - fix-code
+          - fix-design
+          - fix-both
+          - fix-both-flowux
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  quick-heal:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run checks
+        run: npm run check || true
+
+      - name: Run tests
+        run: npm test || true
+
+      # 🟢 Code Fix
+      - name: AI Code Fix
+        if: ${{ github.event.inputs.mode == 'fix-code' || github.event.inputs.mode == 'fix-both' || github.event.inputs.mode == 'fix-both-flowux' }}
+        run: |
+          echo "🔧 Running AI code fix..."
+          echo "(Stub: would call OpenAI/Claude API here)"
+
+      # 🎨 Design Fix
+      - name: AI Design Fix
+        if: ${{ github.event.inputs.mode == 'fix-design' || github.event.inputs.mode == 'fix-both' || github.event.inputs.mode == 'fix-both-flowux' }}
+        run: |
+          echo "🎨 Running AI design fix..."
+          echo "(Stub: would scan and fix UI components)"
+
+      # ✨ FlowUX Makeover
+      - name: AI FlowUX Makeover
+        if: ${{ github.event.inputs.mode == 'fix-both-flowux' }}
+        run: |
+          echo "✨ Running FlowUX makeover..."
+          echo "(Stub: would apply FlowUX design rules)"
+
+      - name: Re-run tests
+        run: npm test
