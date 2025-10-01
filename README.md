@@ -1,14 +1,1 @@
-# 🪄 Magic Quick-Heal Pro
-A starter repo with four AI-powered healing modes:
-
-- Fix Code
-- Fix Design
-- Fix Both
-- - Fix Both + FlowUX Makeover
-  
-  - ## Usage
-  - . Fork this repo.
-  - 2. Add your code/Docker project.
-    3. Add your API key under **GitHub Secrets → OPENAI_API_KEY**.
-     4. Trigger workflow manually with one of the modes.
-             
+# 🪄 Magic Quick-Heal Pro\n\nA starter repo with four AI-powered healing modes:\n\n- Fix Code\n- Fix Design\n- Fix Both\n- Fix Both + FlowUX Makeover\n\n## Usage\n\n1. Fork this repo.\n2. Add your code/Docker project.\n3. Add your API key under **GitHub Secrets → OPENAI_API_KEY**.\n4. Trigger workflow manually with one of the modes.\n
