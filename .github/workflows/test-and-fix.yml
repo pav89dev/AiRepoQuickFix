@@ -1,65 +1,38 @@
-name: Magic Quick-Heal
+name: Test and Auto-Heal
 
 on:
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: "Choose fix mode"
-        required: true
-        default: "fix-code"
-        type: choice
-        options:
-          - fix-code
-          - fix-design
-          - fix-both
-          - fix-both-flowux
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  quick-heal:
+  test-and-heal:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        mode: [error, design, flowux]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run checks
-        run: npm run check || true
-
-      - name: Run tests
-        run: npm test || true
-
-      # 🟢 Code Fix
-      - name: AI Code Fix
-        if: ${{ github.event.inputs.mode == 'fix-code' || github.event.inputs.mode == 'fix-both' || github.event.inputs.mode == 'fix-both-flowux' }}
+      - run: npm install
+      - name: Run Healer
         run: |
-          echo "🔧 Running AI code fix..."
-          echo "(Stub: would call OpenAI/Claude API here)"
+          if [ "${{ matrix.mode }}" == "error" ]; then
+            node error-fix.js
+          elif [ "${{ matrix.mode }}" == "design" ]; then
+            node design-fix.js
+          elif [ "${{ matrix.mode }}" == "flowux" ]; then
+            node flowux-fix.js
+          fi
+      - run: npm test
 
-      # 🎨 Design Fix
-      - name: AI Design Fix
-        if: ${{ github.event.inputs.mode == 'fix-design' || github.event.inputs.mode == 'fix-both' || github.event.inputs.mode == 'fix-both-flowux' }}
-        run: |
-          echo "🎨 Running AI design fix..."
-          echo "(Stub: would scan and fix UI components)"
+      - name: Package healed repo
+        run: zip -r healed-repo.zip .
 
-      # ✨ FlowUX Makeover
-      - name: AI FlowUX Makeover
-        if: ${{ github.event.inputs.mode == 'fix-both-flowux' }}
-        run: |
-          echo "✨ Running FlowUX makeover..."
-          echo "(Stub: would apply FlowUX design rules)"
-
-      - name: Re-run tests
-        run: npm test
+      - name: Upload healed zip
+        uses: actions/upload-artifact@v3
+        with:
+          name: healed-repo
+          path: healed-repo.zip
