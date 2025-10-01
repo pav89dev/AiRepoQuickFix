@@ -1,8 +1,6 @@
-name: Test and Auto-Heal
+name: Test and Heal
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
     inputs:
       mode:
@@ -14,41 +12,44 @@ on:
           - error
           - design
           - flowux
-          - all
+          - full
 
 jobs:
-  test-and-heal:
+  heal:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm install
 
-      - name: Run Healer
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run healing script
         run: |
-          MODE="${{ github.event.inputs.mode }}"
-          if [ "$MODE" = "error" ]; then
-            node error-fix.js
-          elif [ "$MODE" = "design" ]; then
-            node design-fix.js
-          elif [ "$MODE" = "flowux" ]; then
-            node flowux-fix.js
-          elif [ "$MODE" = "all" ]; then
-            node error-fix.js
-            node design-fix.js
-            node flowux-fix.js
+          if [ "${{ github.event.inputs.mode }}" = "error" ]; then
+            npm run error-fix
+          elif [ "${{ github.event.inputs.mode }}" = "design" ]; then
+            npm run design-fix
+          elif [ "${{ github.event.inputs.mode }}" = "flowux" ]; then
+            npm run flowux-fix
+          elif [ "${{ github.event.inputs.mode }}" = "full" ]; then
+            npm run error-fix
+            npm run design-fix
+            npm run flowux-fix
           fi
 
-      - run: npm test
+      - name: Run tests after healing
+        run: npm test
 
-      - name: Package healed repo
-        run: zip -r healed-repo.zip .
-
-      - name: Upload healed zip
+      - name: Upload healed repo artifact
+        if: ${{ github.event.inputs.mode == 'full' }}
         uses: actions/upload-artifact@v4
         with:
           name: healed-repo
-          path: healed-repo.zip          name: healed-repo
-          path: healed-repo.zip
+          path: .
