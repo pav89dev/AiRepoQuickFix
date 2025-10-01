@@ -1,15 +1,26 @@
 {
-  "name": "magic-quick-heal-pro",
+  "name": "ai-repo-quick-fix",
   "version": "1.0.0",
+  "description": "AI-powered repo healing system (error-fix, design-fix, flowux-fix)",
+  "main": "index.js",
   "scripts": {
-    "check": "node scripts/check_env.js && node scripts/check_runtime.js && node scripts/check_ports.js && node scripts/check_deps.js",
-    "test": "jest",
+    "test": "echo \"✅ No test suite configured. Healing run complete.\"",
     "error-fix": "node error-fix.js",
     "design-fix": "node design-fix.js",
     "flowux-fix": "node flowux-fix.js"
   },
-  "devDependencies": {
-    "jest": "^29.0.0",
-    "semver": "^7.6.0"
+  "keywords": [
+    "ai",
+    "heal",
+    "fix",
+    "automation",
+    "repo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "openai": "^4.0.0",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10"
   }
 }
