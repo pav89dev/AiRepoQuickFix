@@ -4,35 +4,51 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "Choose healing mode"
+        required: true
+        default: "error"
+        type: choice
+        options:
+          - error
+          - design
+          - flowux
+          - all
 
 jobs:
   test-and-heal:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        mode: [error, design, flowux]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
       - run: npm install
+
       - name: Run Healer
         run: |
-          if [ "${{ matrix.mode }}" == "error" ]; then
+          MODE="${{ github.event.inputs.mode }}"
+          if [ "$MODE" = "error" ]; then
             node error-fix.js
-          elif [ "${{ matrix.mode }}" == "design" ]; then
+          elif [ "$MODE" = "design" ]; then
             node design-fix.js
-          elif [ "${{ matrix.mode }}" == "flowux" ]; then
+          elif [ "$MODE" = "flowux" ]; then
+            node flowux-fix.js
+          elif [ "$MODE" = "all" ]; then
+            node error-fix.js
+            node design-fix.js
             node flowux-fix.js
           fi
+
       - run: npm test
 
       - name: Package healed repo
         run: zip -r healed-repo.zip .
 
       - name: Upload healed zip
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: healed-repo
+          path: healed-repo.zip          name: healed-repo
           path: healed-repo.zip
