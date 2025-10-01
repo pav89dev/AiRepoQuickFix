@@ -20,15 +20,10 @@ jobs:
           echo "Downloading ${{ github.event.inputs.zip_url }}"
           curl -L -o update.zip "${{ github.event.inputs.zip_url }}"
 
-      - name: Install unzip tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bsdtar rsync
-
       - name: Extract zip safely
         run: |
           mkdir tmp_extract
-          bsdtar -xf update.zip -C tmp_extract
+          unzip -o update.zip -d tmp_extract
           rsync -a tmp_extract/ ./
           rm -rf tmp_extract update.zip
 
