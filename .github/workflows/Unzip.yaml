@@ -20,10 +20,17 @@ jobs:
           echo "Downloading ${{ github.event.inputs.zip_url }}"
           curl -L -o update.zip "${{ github.event.inputs.zip_url }}"
 
-      - name: Extract zip safely
+      - name: Debug zip
+        run: |
+          file update.zip
+          ls -lh update.zip
+          # tar can list too
+          tar -tf update.zip || true
+
+      - name: Extract zip safely (tar method)
         run: |
           mkdir tmp_extract
-          unzip -o update.zip -d tmp_extract
+          tar -xf update.zip -C tmp_extract || true
           rsync -a tmp_extract/ ./
           rm -rf tmp_extract update.zip
 
